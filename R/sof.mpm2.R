@@ -38,6 +38,7 @@ makeMPM2Function = function(n.peaks, dimensions, topology, seed, rotated = TRUE,
     stopf("No support for the multiple peaks model 2 generator at the moment.")
   }
 
+  # n.peaks = 1L; dimensions = 2L; topology = "funnel"; seed = 3L; rotated = TRUE; peak.shape = "ellipse"
   # do some sanity checks
   n.peaks = convertInteger(n.peaks)
   dimensions = convertInteger(dimensions)
@@ -65,15 +66,18 @@ makeMPM2Function = function(n.peaks, dimensions, topology, seed, rotated = TRUE,
 
   # FIXME: initialize 3 functions from mpm2.py as NULL such that they have a visible binding when checking the pkg
   evaluateProblem = getGlobalOptimaParams = getLocalOptimaParams = NULL
-  # load funnel generator to global environemt
-  eval(reticulate::source_python(system.file("mpm2.py", package = "smoof"), convert = TRUE), envir = .GlobalEnv)
 
+  # load funnel generator to global environemt
+  eval(reticulate::py_run_file(system.file("mpm2.py", package = "smoof")), envir = .GlobalEnv)
+  topol = topology
+  eval(reticulate::source_python(system.file("mpm2.py", package = "smoof"), envir = .GlobalEnv, convert = TRUE), envir = .GlobalEnv)
+
+  # extract local and global optima
   local.opt.params = eval(getLocalOptimaParams(n.peaks, dimensions, topology, seed, rotated, peak.shape))
-  if (n.peaks == 1L) {
-    local.opt.params = list(local.opt.params)
-  }
-  local.opt.params = do.call(rbind, local.opt.params)
-  global.opt.params = eval(getGlobalOptimaParams(n.peaks, dimensions, topology, seed, rotated, peak.shape))
+  local.opt.params = do.call(rbind, lapply(local.opt.params, unlist))
+
+  global.opt.params = eval(getGlobalOptimaParams(n.peaks, dimensions, topology, seed, rotated, peak.shape), envir = .GlobalEnv)
+  global.opt.params = matrix(global.opt.params[[1L]], nrow = 1L)
 
   smoof.fn = makeSingleObjectiveFunction(
     name = sprintf("Funnel_%i_%i_%i_%s_%s%s", n.peaks, dimensions, seed, topology, peak.shape, ifelse(rotated, "_rotated", "")),

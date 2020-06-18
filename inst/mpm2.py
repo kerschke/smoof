@@ -120,7 +120,7 @@ class MultiplePeaksModel2:
 
 
     @classmethod
-    def createInstance(cls, peaks, topology="random", shapeHeightCorrelation=0):
+    def createInstance(cls, peaks, topology = "random", shapeHeightCorrelation=0):
         assert(shapeHeightCorrelation in (-1, 0, 1))
         # attention: deepcopy is important because peak objects are
         # modified in the following
@@ -299,7 +299,7 @@ currentPeakShape = "ellipse"
 
 def initProblem(npeaks, dimension, topology, randomSeed, rotated, peakShape):
     global currentProblem, currentNpeaks, currentDimension, currentTopology, currentSeed, currentRotated, currentPeakShape
-    if (currentNpeaks != npeaks or currentDimension != dimension or currentTopology != topology or currentSeed != randomSeed or currentRotated != rotated or currentPeakShape != peakShape):
+    if ((currentNpeaks != npeaks) or (currentDimension != dimension) or (currentTopology != topology) or (currentSeed != randomSeed) or (currentRotated != rotated) or (currentPeakShape != peakShape)):
       currentNpeaks = npeaks
       currentDimension = dimension
       currentTopology = topology
@@ -308,7 +308,7 @@ def initProblem(npeaks, dimension, topology, randomSeed, rotated, peakShape):
       currentPeakShape = peakShape
       random.seed(randomSeed)
       np.random.seed(randomSeed)
-      currentProblem = MultiplePeaksModel2.createInstanceWithExactNumberOfOptima(npeaks, dimension, topology, shapeHeightCorrelation = 0, rotatedPeaks = rotated, peakShape = peakShape)
+      currentProblem = MultiplePeaksModel2.createInstanceWithExactNumberOfOptima(npeaks, dimension, topology = topology, shapeHeightCorrelation = 0, rotatedPeaks = rotated, peakShape = peakShape)
 
 def evaluateProblem(position, npeaks, dimension, topology, randomSeed, rotated, peakShape):
     global currentProblem
