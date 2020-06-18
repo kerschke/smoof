@@ -10,3 +10,5 @@ tests/testthat/Rplots.pdf
 test_specific.R
 *.so
 *.o
+.DS_Store
+
